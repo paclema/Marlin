@@ -276,8 +276,11 @@ static uint8_t target_extruder;
 bool no_wait_for_cooling = true;
 bool target_direction;
 
-#ifdef ENABLE_AUTO_BED_LEVELING
+#if defined(ENABLE_AUTO_BED_LEVELING) || defined(EASY_UI)
   int xy_travel_speed = XY_TRAVEL_SPEED;
+#endif
+
+#ifdef ENABLE_AUTO_BED_LEVELING
   float zprobe_zoffset = -Z_PROBE_OFFSET_FROM_EXTRUDER;
 #endif
 
@@ -1105,6 +1108,42 @@ static void setup_for_endstop_move() {
   enable_endstops(true);
 }
 
+#if defined(ENABLE_AUTO_BED_LEVELING) || defined(EASY_UI)
+
+  static void do_blocking_move_to(float x, float y, float z) {
+    float oldFeedRate = feedrate;
+
+    #ifdef DELTA
+
+      feedrate = XY_TRAVEL_SPEED;
+      
+      destination[X_AXIS] = x;
+      destination[Y_AXIS] = y;
+      destination[Z_AXIS] = z;
+      prepare_move_raw();
+      st_synchronize();
+
+    #else
+
+      feedrate = homing_feedrate[Z_AXIS];
+
+      current_position[Z_AXIS] = z;
+      line_to_current_position();
+      st_synchronize();
+
+      feedrate = xy_travel_speed;
+
+      current_position[X_AXIS] = x;
+      current_position[Y_AXIS] = y;
+      line_to_current_position();
+      st_synchronize();
+
+    #endif
+
+    feedrate = oldFeedRate;
+  }
+#endif
+
 #ifdef ENABLE_AUTO_BED_LEVELING
 
   #ifdef DELTA
@@ -1226,43 +1265,6 @@ static void setup_for_endstop_move() {
       sync_plan_position();
       
     #endif // !DELTA
-  }
-
-  /**
-   *  Plan a move to (X, Y, Z) and set the current_position
-   *  The final current_position may not be the one that was requested
-   */
-  static void do_blocking_move_to(float x, float y, float z) {
-    float oldFeedRate = feedrate;
-
-    #ifdef DELTA
-
-      feedrate = XY_TRAVEL_SPEED;
-      
-      destination[X_AXIS] = x;
-      destination[Y_AXIS] = y;
-      destination[Z_AXIS] = z;
-      prepare_move_raw(); // this will also set_current_to_destination
-      st_synchronize();
-
-    #else
-
-      feedrate = homing_feedrate[Z_AXIS];
-
-      current_position[Z_AXIS] = z;
-      line_to_current_position();
-      st_synchronize();
-
-      feedrate = xy_travel_speed;
-
-      current_position[X_AXIS] = x;
-      current_position[Y_AXIS] = y;
-      line_to_current_position();
-      st_synchronize();
-
-    #endif
-
-    feedrate = oldFeedRate;
   }
 
   static void clean_up_after_endstop_move() {
@@ -4827,6 +4829,110 @@ inline void gcode_M503() {
 
 #endif // DUAL_X_CARRIAGE
 
+ // EASY_UI
+#ifdef EASY_UI
+inline void gcode_M700() {
+
+        SERIAL_ECHOLN(" --LEVEL PLATE SCRIPT--");    
+        set_ChangeScreen(true);
+        
+        while(!lcd_clicked()){
+        set_pageShowInfo(0);      
+        lcd_update();        
+        }
+        
+        set_pageShowInfo(1);
+        set_ChangeScreen(true);        
+
+        gcode_G28();
+
+        // prob 1
+        
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS+10);
+        do_blocking_move_to((X_MAX_POS-X_MIN_POS)/2,Y_MAX_POS-10, current_position[Z_AXIS]);
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS], Z_MIN_POS);
+        
+       while(!lcd_clicked()){          
+          manage_heater();
+        //  manage_inactivity();
+        }
+        
+        set_ChangeScreen(true);
+        set_pageShowInfo(2); 
+        
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS+10);
+        do_blocking_move_to(90, 5, current_position[Z_AXIS]);
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);
+          
+        while(!lcd_clicked()){
+          manage_heater();
+          manage_inactivity();
+        }
+        
+        set_ChangeScreen(true);
+        set_pageShowInfo(3);
+                  
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS+10);
+        do_blocking_move_to(205, 5, current_position[Z_AXIS]);
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);
+              
+         while(!lcd_clicked()){
+          manage_heater();
+          manage_inactivity();
+        }        
+        
+        set_ChangeScreen(true);
+        set_pageShowInfo(4);
+                 
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS+10);
+        do_blocking_move_to(150, 105, current_position[Z_AXIS]);
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);
+              
+        while(!lcd_clicked()){                  
+          manage_heater();
+          manage_inactivity();
+        }
+        
+        set_ChangeScreen(true);
+        set_pageShowInfo(5);
+                
+        do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS+50);
+        do_blocking_move_to(10, 10, current_position[Z_AXIS]);
+        //do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);       
+   
+}
+inline void gcode_M701() {
+      SERIAL_ECHOLN(" --LOAD-- ");
+      
+       st_synchronize();
+       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]); 
+    
+      //-- Extrude!
+      current_position[E_AXIS] += FILAMENT_EXTRUSION_LENGTH;
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS],current_position[E_AXIS], 300/60, active_extruder);
+      st_synchronize(); 
+
+      }
+      
+inline void gcode_M702() {
+      SERIAL_ECHOLN(" --UNLOAD-- ");
+      
+       st_synchronize(); 
+       plan_set_position(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]); 
+    
+      //-- Extrude a litle!
+      current_position[E_AXIS] += FILAMENT_UNLOAD_EXTRUSION_LENGTH;
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS],current_position[E_AXIS], 300/60, active_extruder);
+      st_synchronize(); 
+      
+      //-- Retract now!
+      current_position[E_AXIS] -= FILAMENT_UNLOAD_RETRACTION_LENGTH;
+      plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS],current_position[E_AXIS], 300/60, active_extruder);
+      st_synchronize();
+    }
+
+#endif
+//EASY_UI
 /**
  * M907: Set digital trimpot motor current using axis codes X, Y, Z, E, B, S
  */
@@ -5498,6 +5604,18 @@ void process_commands() {
           gcode_M605();
           break;
       #endif // DUAL_X_CARRIAGE
+
+      #ifdef EASY_UI
+        case 700: // M700 - Level plate script used on EASY_UI printer interface. Take 3 points to adjust the bed.
+          gcode_M700();
+          break;
+        case 701: // M701 - Load filament script used on EASY_UI printer interface. This helps to load the filament and extrude automatically
+          gcode_M701();
+          break;
+         case 702:  // M702 - Unload filament script used on EASY_UI printer interface.This helps to unload the filament and extrude and then retract automatically 
+          gcode_M702();
+          break;
+      #endif // EASY_UI
 
       case 907: // M907 Set digital trimpot motor current using axis codes.
         gcode_M907();
