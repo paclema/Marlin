@@ -4752,6 +4752,11 @@ inline void gcode_M503() {
       lcd_update();
     } // while(!lcd_clicked)
 
+    #ifdef AUTO_FILAMENT_CHANGE
+          current_position[E_AXIS]=0;
+          st_synchronize();
+    #endif
+          
     //return to normal
     if (code_seen('L')) target[E_AXIS] -= code_value();
     #ifdef FILAMENTCHANGE_FINALRETRACT
