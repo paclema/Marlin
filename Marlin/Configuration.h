@@ -220,9 +220,9 @@ Here are some standard links for getting your machine calibrated:
 
 // HEHESTOS
 
-#define  DEFAULT_Kp 19.20
-#define  DEFAULT_Ki 1.56
-#define  DEFAULT_Kd 58.98
+#define  DEFAULT_Kp 10.86
+#define  DEFAULT_Ki 0.96
+#define  DEFAULT_Kd 30.70
 
 #endif // PIDTEMP
 
