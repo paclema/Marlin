@@ -4594,6 +4594,22 @@ inline void gcode_M503() {
 
 #endif // DUAL_X_CARRIAGE
 
+#ifdef FAN2_PIN
+
+  /**
+   * M806: Set Fan Speed
+   */
+  inline void gcode_M806() { //fanSpeed = code_seen('S') ? constrain(code_value_short(), 0, 255) : 255; }
+
+  /**
+   * M807: Fan Off
+   */
+  inline void gcode_M807() { //fanSpeed = 0; }
+
+#endif // FAN2_PIN
+
+
+
 /**
  * M907: Set digital trimpot motor current using axis codes X, Y, Z, E, B, S
  */
@@ -5231,6 +5247,15 @@ void process_commands() {
           gcode_M605();
           break;
       #endif // DUAL_X_CARRIAGE
+
+      #ifdef FAN2_PIN
+        case 806:
+          gcode_M806(); //M806 Fan On
+          break;
+        case 807:
+          gcode_M807(); //M807 Fan Off
+          break;
+      #endif // FAN2_PIN
 
       case 907: // M907 Set digital trimpot motor current using axis codes.
         gcode_M907();
