@@ -192,8 +192,8 @@
 #define X_HOME_BUMP_MM 5
 #define Y_HOME_BUMP_MM 5
 #define Z_HOME_BUMP_MM 2
-#define HOMING_BUMP_DIVISOR {2, 2, 4}  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
-//#define QUICK_HOME  //if this is defined, if both x and y are to be homed, a diagonal move will be performed initially.
+#define HOMING_BUMP_DIVISOR {5, 5, 10}  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
+#define QUICK_HOME  //if this is defined, if both x and y are to be homed, a diagonal move will be performed initially.
 
 // @section machine
 
@@ -282,7 +282,7 @@
   //#define MENU_ADDAUTOSTART
 
   // Show a progress bar on HD44780 LCDs for SD printing
-  //#define LCD_PROGRESS_BAR
+  #define LCD_PROGRESS_BAR
 
   #ifdef LCD_PROGRESS_BAR
     // Amount of time (ms) to show the bar
