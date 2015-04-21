@@ -233,10 +233,18 @@ Here are some standard links for getting your machine calibrated:
 //WITBOX:
 
 //test CERAMICO MECANIZADO:
-
+  //1 iteration:
+  /*
 #define  DEFAULT_Kp 22.39
 #define  DEFAULT_Ki 1.59
 #define  DEFAULT_Kd 78.67
+*/
+ //2 iteration:
+
+#define  DEFAULT_Kp 21.94
+#define  DEFAULT_Ki 1.59
+#define  DEFAULT_Kd 75.47
+
 #endif // PIDTEMP
 
 //===========================================================================
