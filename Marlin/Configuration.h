@@ -432,8 +432,8 @@ const bool Z_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the logic 
 // ENDSTOP SETTINGS:
 // Sets direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
-#define X_HOME_DIR 1
-#define Y_HOME_DIR 1
+#define X_HOME_DIR -1
+#define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
 
 #define min_software_endstops true // If true, axis won't move to coordinates less than HOME_POS.
@@ -445,10 +445,15 @@ const bool Z_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the logic 
 #define X_MIN_POS 0
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
+/* //WITBOX:
 #define X_MAX_POS 297
 #define Y_MAX_POS 210
 #define Z_MAX_POS 200
-
+*/
+//PRUSA
+#define X_MAX_POS 215
+#define Y_MAX_POS 180
+#define Z_MAX_POS 180
 //===========================================================================
 //============================= Filament Runout Sensor ======================
 //===========================================================================
@@ -618,10 +623,16 @@ const bool Z_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the logic 
 #define HOMING_FEEDRATE {120*60, 120*60, 12*60, 0}  // set the homing speeds (mm/min)
 
 // default settings
-
+// WITBOX
+/*
 #define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,600.0*8/3,100}  // default steps per unit for Ultimaker
 #define DEFAULT_MAX_FEEDRATE          {350, 350, 15, 120}    // (mm/sec)
 #define DEFAULT_MAX_ACCELERATION      {1000,1000,10,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for Skeinforge 40+, for older versions raise them a lot.
+*/
+//PRUSA:
+#define DEFAULT_AXIS_STEPS_PER_UNIT   {80,80,4000,100}  // default steps per unit for Ultimaker
+#define DEFAULT_MAX_FEEDRATE          {250, 250, 3.3, 120}    // (mm/sec)
+#define DEFAULT_MAX_ACCELERATION      {3000,3000,100,10000}    // X, Y, Z, E maximum start speed for accelerated moves. E default values are good for Skeinforge 40+, for older versions raise them a lot.
 
 #define DEFAULT_ACCELERATION          3000    // X, Y, Z and E acceleration in mm/s^2 for printing moves
 #define DEFAULT_RETRACT_ACCELERATION  3000   // E acceleration in mm/s^2 for retracts
