@@ -246,10 +246,15 @@ Here are some standard links for getting your machine calibrated:
 #define  DEFAULT_Kd 75.47
 */
 // MkI con teflón:
-
+/*
 #define  DEFAULT_Kp 13.85
 #define  DEFAULT_Ki 0.70
 #define  DEFAULT_Kd 68.39
+*/
+ //MKII con teflón
+#define  DEFAULT_Kp 63.67
+#define  DEFAULT_Ki 5.78
+#define  DEFAULT_Kd 175.26
 
 #endif // PIDTEMP
 
