@@ -116,7 +116,7 @@ static void lcd_unload_material_extrud_2();
 #endif
 //<-Extra menus EASY_UI
 
-  static void lcd_quick_feedback();//Cause an LCD refresh, and give the user visual or audible feedback that something has happened
+  void lcd_quick_feedback();//Cause an LCD refresh, and give the user visual or audible feedback that something has happened
 
   /* Different types of actions that can be used in menu items. */
   static void menu_action_back(menuFunc_t data);

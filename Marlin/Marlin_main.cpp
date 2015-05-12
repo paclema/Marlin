@@ -4834,9 +4834,9 @@ inline void gcode_M503() {
 
 #endif // DUAL_X_CARRIAGE
 
- // EASY_UI
+
 #ifdef EASY_UI
-inline void gcode_M700() {
+  inline void gcode_M700() {
 
         SERIAL_ECHOLN(" --LEVEL PLATE SCRIPT--");    
         set_ChangeScreen(true);
@@ -4905,8 +4905,8 @@ inline void gcode_M700() {
         do_blocking_move_to(LEVEL_PLATE_X_FINAL_POSITION, LEVEL_PLATE_Y_FINAL_POSITION, current_position[Z_AXIS]);
         //do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);       
    
-}
-inline void gcode_M701() {
+  }
+  inline void gcode_M701() {
       SERIAL_ECHOLN(" --LOAD-- ");
       
        st_synchronize();
@@ -4919,7 +4919,7 @@ inline void gcode_M701() {
 
       }
       
-inline void gcode_M702() {
+  inline void gcode_M702() {
       SERIAL_ECHOLN(" --UNLOAD-- ");
       
        st_synchronize(); 
@@ -4934,9 +4934,9 @@ inline void gcode_M702() {
       current_position[E_AXIS] -= FILAMENT_UNLOAD_RETRACTION_LENGTH;
       plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS],current_position[E_AXIS], EXTRUSION_SPEED/60, active_extruder);
       st_synchronize();
-    }
+  }
 
-inline void gcode_M703() {
+  inline void gcode_M703() {
 
 /*
 Example of use:
@@ -4997,9 +4997,10 @@ Si solo mandais M703 ó M703 W, por defecto el numero de parpadeos se queda en 3
             delay(light_delay);
             }
       }
-    }
+  }
 
 #endif
+  
 //EASY_UI
 /**
  * M907: Set digital trimpot motor current using axis codes X, Y, Z, E, B, S
