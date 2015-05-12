@@ -4936,6 +4936,69 @@ inline void gcode_M702() {
       st_synchronize();
     }
 
+inline void gcode_M703() {
+
+/*
+Example of use:
+
+M703 L8 T300 W
+
+Los parametros quieren decir:
+L: numero de parpadeos 
+T: tiempo entre parpadeos
+W: se queda en modo wait for user esperando a ser pulsada la rueda para continuar
+Si esta en modo W obviamente sobra el parametro L xq arpadea infinitamente
+Si solo mandais M703 ó M703 W, por defecto el numero de parpadeos se queda en 3 y a 300 de tiempo.
+
+*/
+    int light_count=0;
+    int light_delay=0;
+
+
+      SERIAL_ECHOLN(" --LIGHT CONTROL-- ");
+
+      if (code_seen('L'))
+        light_count = code_value();
+      else light_count = 3;
+
+
+      if (code_seen('T'))
+        light_delay = code_value();
+      else light_delay = 300;
+
+
+      if (code_seen('W')){
+ 
+       LCD_MESSAGEPGM("Calibra la base!");
+
+            while(!lcd_clicked()){                  
+            manage_heater();
+            manage_inactivity();
+            lcd_update();
+    
+
+            digitalWrite(8,LOW);
+            delay(light_delay);
+            digitalWrite(8,HIGH);
+            delay(light_delay);
+
+          }
+      LCD_MESSAGEPGM(MSG_RESUMING);
+
+      }
+
+      else {
+
+          for(int i =1;i<=light_count; i++){
+
+            digitalWrite(8,LOW);
+            delay(light_delay);
+            digitalWrite(8,HIGH);
+            delay(light_delay);
+            }
+      }
+    }
+
 #endif
 //EASY_UI
 /**
@@ -5619,6 +5682,9 @@ void process_commands() {
           break;
          case 702:  // M702 - Unload filament script used on EASY_UI printer interface.This helps to unload the filament and extrude and then retract automatically 
           gcode_M702();
+          break;
+         case 703:  // M703 - Light COntroll
+          gcode_M703();
           break;
       #endif // EASY_UI
 
