@@ -4750,10 +4750,16 @@ inline void gcode_M503() {
     LCD_ALERTMESSAGEPGM(MSG_FILAMENTCHANGE);
     uint8_t cnt = 0;
     while (!lcd_clicked()) {
-      if (++cnt == 0) lcd_quick_feedback(); // every 256th frame till the lcd is clicked
-      manage_heater();
-      manage_inactivity(true);
-      lcd_update();
+      #ifndef AUTO_FILAMENT_CHANGE
+        if (++cnt == 0) lcd_quick_feedback(); // every 256th frame till the lcd is clicked
+        manage_heater();
+        manage_inactivity(true);
+        lcd_update();
+      #else
+        current_position[E_AXIS] += AUTO_FILAMENT_CHANGE_LENGTH;
+        plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_MAX_ENDSTOP_INVERTING],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
+        st_synchronize();
+      #endif
     } // while(!lcd_clicked)
 
     #ifdef AUTO_FILAMENT_CHANGE
