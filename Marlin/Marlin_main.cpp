@@ -4973,7 +4973,7 @@ Si solo mandais M703 ó M703 W, por defecto el numero de parpadeos se queda en 3
 
       if (code_seen('W')){
  
-       LCD_MESSAGEPGM("Calibra la base!");
+       LCD_MESSAGEPGM(MSG_USERWAIT);
 
             while(!lcd_clicked()){                  
             manage_heater();
