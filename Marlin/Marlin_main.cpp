@@ -4759,7 +4759,7 @@ inline void gcode_M503() {
         lcd_update();
       #else
         current_position[E_AXIS] += AUTO_FILAMENT_CHANGE_LENGTH;
-        plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_MAX],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
+        plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_AXIS],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
         st_synchronize();
       #endif
     } // while(!lcd_clicked)
@@ -4985,7 +4985,7 @@ Si solo mandais M703 ó M703 W, por defecto el numero de parpadeos se queda en 3
 
             while(!lcd_clicked()){                  
             manage_heater();
-            manage_inactivity();
+            manage_inactivity(true);
             lcd_update();
     
 
