@@ -490,17 +490,17 @@ static void lcd_main_menu() {
 #ifdef EASY_UI
 static void lcd_speed_printing()
 {
-    feedmultiply += int(encoderPosition);
+    feedrate_multiplier += int(encoderPosition);
     encoderPosition = 0;
-    if (feedmultiply < 10)
-        feedmultiply = 10;
-    if (feedmultiply > 999)
-        feedmultiply = 999;
+    if (feedrate_multiplier < 10)
+        feedrate_multiplier = 10;
+    if (feedrate_multiplier > 999)
+        feedrate_multiplier = 999;
 
     lcdDrawUpdate = 1;
     if (lcdDrawUpdate)
     {
-        lcd_implementation_drawedit(PSTR(MSG_SPEED), itostr3(feedmultiply));
+        lcd_implementation_drawedit(PSTR(MSG_SPEED), itostr3(feedrate_multiplier));
     }
     if (LCD_CLICKED)
     {
@@ -927,7 +927,7 @@ void config_lcd_level_bed(){
     SERIAL_ECHOLN("Leveling..."); 
     currentMenu=lcd_level_bed;
     fanSpeed = PREHEAT_FAN_SPEED;
-    enquecommands_P(PSTR("M700"));
+    enqueuecommands_P(PSTR("M700"));
     pageShowInfo=0;
   }
   else{
@@ -1191,7 +1191,7 @@ static void lcd_unload_material_extrud_1()
   currentMenu = lcd_filament_menu;
 #endif
   active_extruder = 0;
-  enquecommands_P(PSTR("M702"));
+  enqueuecommands_P(PSTR("M702"));
     }
 }
 #endif //EASY_UI
@@ -1279,7 +1279,7 @@ static void lcd_unload_material_extrud_2()
    
         currentMenu = select_extruder_unload;
          active_extruder = 1;
-   enquecommands_P(PSTR("M702"));
+   enqueuecommands_P(PSTR("M702"));
     }
 }
 #endif
@@ -1980,7 +1980,7 @@ void lcd_update() {
        //EASY_UI->
       #ifdef EASY_UI
               if (FilamentMenuActive)                   //load or unload filament menu active
-                  timeoutToStatus = millis() + LCD_TIMEOUT_TO_STATUS;
+                  return_to_status_ms = ms + LCD_TIMEOUT_TO_STATUS;
               if (ChangeScreen && pageShowInfo!=5){           //Leveling platform 
                   lcd_level_bed(); 
                   currentMenu=lcd_level_bed;

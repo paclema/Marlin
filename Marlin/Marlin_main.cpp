@@ -4903,9 +4903,9 @@ inline void gcode_M503() {
                 
         do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],LEVEL_PLATE_Z_FINAL_RAISE);
         do_blocking_move_to(LEVEL_PLATE_X_FINAL_POSITION, LEVEL_PLATE_Y_FINAL_POSITION, current_position[Z_AXIS]);
-        //do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);       
-   
+        //do_blocking_move_to(current_position[X_AXIS], current_position[Y_AXIS],Z_MIN_POS);
   }
+  
   inline void gcode_M701() {
       SERIAL_ECHOLN(" --LOAD-- ");
       
