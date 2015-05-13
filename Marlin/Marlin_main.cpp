@@ -669,6 +669,10 @@ void setup() {
     pinMode(STAT_LED_BLUE, OUTPUT);
     digitalWrite(STAT_LED_BLUE, LOW); // turn it off
   #endif  
+
+//For M703 gcode:
+  pinMode(8, OUTPUT);
+  digitalWrite(8,HIGH);
 }
 
 /**
