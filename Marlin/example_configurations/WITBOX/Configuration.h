@@ -398,14 +398,14 @@ const bool Z_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the logic 
 //===========================================================================
 //========================= Filament Runout Sensor ==========================
 //===========================================================================
-//#define FILAMENT_RUNOUT_SENSOR // Uncomment for defining a filament runout sensor such as a mechanical or opto endstop to check the existence of filament
+#define FILAMENT_RUNOUT_SENSOR // Uncomment for defining a filament runout sensor such as a mechanical or opto endstop to check the existence of filament
                                  // In RAMPS uses servo pin 2. Can be changed in pins file. For other boards pin definition should be made.
                                  // It is assumed that when logic high = filament available
                                  //                    when logic  low = filament ran out
 #ifdef FILAMENT_RUNOUT_SENSOR
   const bool FIL_RUNOUT_INVERTING = true;  // Should be uncommented and true or false should assigned
   #define ENDSTOPPULLUP_FIL_RUNOUT // Uncomment to use internal pullup for filament runout pins if the sensor is defined.
-  #define FILAMENT_RUNOUT_SCRIPT "M600"
+  #define FILAMENT_RUNOUT_SCRIPT "G91\n G1 Z10 F300\n M703 W\n M600\n G90"
 #endif 
 
 //===========================================================================
@@ -713,7 +713,7 @@ const bool Z_PROBE_ENDSTOP_INVERTING = true; // set to true to invert the logic 
 //=============================LCD Interface Features===============================
 //===========================================================================
 
-//#define EASY_UI		//Uncoment for use user friendly interface, for people unfamiliar with the technicalities
+#define EASY_UI		//Uncoment for use user friendly interface, for people unfamiliar with the technicalities
 
 #ifdef EASY_UI
 
