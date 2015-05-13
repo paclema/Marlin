@@ -4741,11 +4741,13 @@ inline void gcode_M503() {
 
     //finish moves
     st_synchronize();
+    #ifndef AUTO_FILAMENT_CHANGE
     //disable extruder steppers so filament can be removed
     disable_e0();
     disable_e1();
     disable_e2();
     disable_e3();
+    #endif
     delay(100);
     LCD_ALERTMESSAGEPGM(MSG_FILAMENTCHANGE);
     uint8_t cnt = 0;
@@ -4757,7 +4759,7 @@ inline void gcode_M503() {
         lcd_update();
       #else
         current_position[E_AXIS] += AUTO_FILAMENT_CHANGE_LENGTH;
-        plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_MAX_ENDSTOP_INVERTING],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
+        plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_MAX],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
         st_synchronize();
       #endif
     } // while(!lcd_clicked)
