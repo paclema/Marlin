@@ -4761,6 +4761,9 @@ inline void gcode_M503() {
         current_position[E_AXIS] += AUTO_FILAMENT_CHANGE_LENGTH;
         plan_buffer_line(target[X_AXIS],target[Y_AXIS],target[Z_AXIS],current_position[E_AXIS],AUTO_FILAMENT_CHANGE_FEEDRATE/60,active_extruder);
         st_synchronize();
+        manage_heater();
+        manage_inactivity(true);
+        lcd_update();
       #endif
     } // while(!lcd_clicked)
 
