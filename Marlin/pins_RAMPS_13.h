@@ -97,7 +97,7 @@
 #endif
 
 #if MB(RAMPS_13_EFF)
-  #define HEATER_0_PIN       8
+  #define HEATER_0_PIN       10
 #else
   #define HEATER_0_PIN       10   // EXTRUDER 1
 #endif
