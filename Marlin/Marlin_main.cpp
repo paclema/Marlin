@@ -4913,7 +4913,9 @@ inline void gcode_M503() {
     LCD_ALERTMESSAGEPGM(MSG_FILAMENTCHANGE);
     uint8_t cnt = 0;
     while (!lcd_clicked()) {
-      if (++cnt == 0) lcd_quick_feedback(); // every 256th frame till the lcd is clicked
+      if (++cnt == 0) lcd_buzz(FILAMENTCHANGE_BEEP_HZ, FILAMENTCHANGE_BEEP_MS);
+      delay(FILAMENTCHANGE_BEEP_MS);
+      
       manage_heater();
       manage_inactivity(true);
       lcd_update();
