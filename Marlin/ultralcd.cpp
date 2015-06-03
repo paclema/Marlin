@@ -58,6 +58,13 @@ static void lcd_status_screen();
   static void lcd_control_temperature_preheat_abs_settings_menu();
   static void lcd_control_motion_menu();
   static void lcd_control_volumetric_menu();
+  static void lcd_move_jog_menu();
+  static void lcd_cooldown();
+  static void lcd_preheat();
+  static void lcd_babystep_x();
+  static void lcd_babystep_y();
+  static void lcd_babystep_z();
+  static void lcd_move_menu_1mm();
   #ifdef HAS_LCD_CONTRAST
     static void lcd_set_contrast();
   #endif
@@ -478,7 +485,35 @@ static void lcd_main_menu() {
           MENU_ITEM(submenu, MSG_SPEED, lcd_speed_printing);  
       }
         else{
-          MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
+
+          #ifdef ARRAY_MENU
+
+            MENU_ITEM(submenu, MSG_LOAD, lcd_load_material_extrud_1);
+            MENU_ITEM(submenu, MSG_UNLOAD, lcd_unload_material_extrud_1);
+            MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
+            MENU_ITEM(submenu, MSG_JOG, lcd_move_menu_1mm);
+            //MENU_ITEM(submenu, MSG_JOG, lcd_move_jog_menu);
+
+            if(target_temperature[0]>10)   MENU_ITEM(function, MSG_COOLDOWN, lcd_cooldown );
+            else                           MENU_ITEM(function, MSG_PREHEAT, lcd_preheat);    
+
+            MENU_ITEM(function, MSG_LEVEL_PLATE, config_lcd_level_bed); 
+
+            #ifdef BABYSTEPPING
+              #ifdef BABYSTEP_XY
+                MENU_ITEM(submenu, MSG_BABYSTEP_X, lcd_babystep_x);
+                MENU_ITEM(submenu, MSG_BABYSTEP_Y, lcd_babystep_y);
+              #endif //BABYSTEP_XY
+              MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
+            #endif
+
+            MENU_ITEM(gcode, MSG_DISABLE_STEPPERS, PSTR("M84"));
+
+          #else
+
+            MENU_ITEM(submenu, MSG_CONTROL, lcd_control_menu);
+
+          #endif
         }
 
    #endif  //EASY_UI

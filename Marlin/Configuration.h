@@ -712,6 +712,9 @@ const bool Z_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the logic
 
 #ifdef EASY_UI
 
+  //Simplified menu entries:
+   //#define ARRAY_MENU
+
 	//Level plate Script:
 	#define LEVEL_PLATE_TEMP_PROTECTION 60
   #define LEVEL_PLATE_LEFT_POSITION 90
