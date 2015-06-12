@@ -325,4 +325,11 @@
     #error Thermal Runaway Protection for the bed must now be enabled with THERMAL_PROTECTION_BED
   #endif
 
+  /**
+   * Warnings for use EASY_UI without display selected
+   */
+  #if defined(EASY_UI) && (!defined(ULTRA_LCD) || !defined(NEWPANEL) )
+    #error EASY_UI requires a display. Ultra_lcd is not defined or perhaps you must choose a type of display.
+  #endif
+
 #endif //SANITYCHECK_H
