@@ -80,7 +80,7 @@ unsigned char soft_pwm_bed;
     static TRState thermal_runaway_state_machine[4] = { TRReset, TRReset, TRReset, TRReset };
     static millis_t thermal_runaway_timer[4]; // = {0,0,0,0};
   #endif
-  #ifdef THERMAL_PROTECTION_BED
+  #if defined(THERMAL_PROTECTION_BED) && TEMP_SENSOR_BED != 0
     static TRState thermal_runaway_bed_state_machine = TRReset;
     static millis_t thermal_runaway_bed_timer;
   #endif
@@ -191,8 +191,7 @@ static void updateTemperaturesFromRawValues();
 //================================ Functions ================================
 //===========================================================================
 
-void PID_autotune(float temp, int extruder, int ncycles)
-{
+void PID_autotune(float temp, int extruder, int ncycles) {
   float input = 0.0;
   int cycles = 0;
   bool heating = true;
@@ -324,11 +323,11 @@ void PID_autotune(float temp, int extruder, int ncycles)
       int p;
       if (extruder < 0) {
         p = soft_pwm_bed;
-        SERIAL_PROTOCOLPGM(MSG_OK_B);
+        SERIAL_PROTOCOLPGM(MSG_B);
       }
       else {
         p = soft_pwm[extruder];
-        SERIAL_PROTOCOLPGM(MSG_OK_T);
+        SERIAL_PROTOCOLPGM(MSG_T);
       }
 
       SERIAL_PROTOCOL(input);
@@ -371,17 +370,14 @@ int getHeaterPower(int heater) {
 
 #if HAS_AUTO_FAN
 
-void setExtruderAutoFanState(int pin, bool state)
-{
+void setExtruderAutoFanState(int pin, bool state) {
   unsigned char newFanSpeed = (state != 0) ? EXTRUDER_AUTO_FAN_SPEED : 0;
   // this idiom allows both digital and PWM fan outputs (see M42 handling).
-  pinMode(pin, OUTPUT);
   digitalWrite(pin, newFanSpeed);
   analogWrite(pin, newFanSpeed);
 }
 
-void checkExtruderAutoFans()
-{
+void checkExtruderAutoFans() {
   uint8_t fanState = 0;
 
   // which fan pins need to be turned on?      
@@ -426,11 +422,11 @@ void checkExtruderAutoFans()
   // update extruder auto fan states
   #if HAS_AUTO_FAN_0
     setExtruderAutoFanState(EXTRUDER_0_AUTO_FAN_PIN, (fanState & 1) != 0);
-  #endif 
+  #endif
   #if HAS_AUTO_FAN_1
     if (EXTRUDER_1_AUTO_FAN_PIN != EXTRUDER_0_AUTO_FAN_PIN)
       setExtruderAutoFanState(EXTRUDER_1_AUTO_FAN_PIN, (fanState & 2) != 0);
-  #endif 
+  #endif
   #if HAS_AUTO_FAN_2
     if (EXTRUDER_2_AUTO_FAN_PIN != EXTRUDER_0_AUTO_FAN_PIN
         && EXTRUDER_2_AUTO_FAN_PIN != EXTRUDER_1_AUTO_FAN_PIN)
@@ -444,7 +440,7 @@ void checkExtruderAutoFans()
   #endif
 }
 
-#endif // any extruder auto fan pins set
+#endif // HAS_AUTO_FAN
 
 //
 // Temperature Error Handlers
@@ -480,6 +476,8 @@ float get_pid_output(int e) {
   #ifdef PIDTEMP
     #ifndef PID_OPENLOOP
       pid_error[e] = target_temperature[e] - current_temperature[e];
+      dTerm[e] = K2 * PID_PARAM(Kd,e) * (current_temperature[e] - temp_dState[e]) + K1 * dTerm[e];
+      temp_dState[e] = current_temperature[e];
       if (pid_error[e] > PID_FUNCTIONAL_RANGE) {
         pid_output = BANG_MAX;
         pid_reset[e] = true;
@@ -498,7 +496,6 @@ float get_pid_output(int e) {
         temp_iState[e] = constrain(temp_iState[e], temp_iState_min[e], temp_iState_max[e]);
         iTerm[e] = PID_PARAM(Ki,e) * temp_iState[e];
 
-        dTerm[e] = K2 * PID_PARAM(Kd,e) * (current_temperature[e] - temp_dState[e]) + K1 * dTerm[e];
         pid_output = pTerm[e] + iTerm[e] - dTerm[e];
         if (pid_output > PID_MAX) {
           if (pid_error[e] > 0) temp_iState[e] -= pid_error[e]; // conditional un-integration
@@ -509,7 +506,6 @@ float get_pid_output(int e) {
           pid_output = 0;
         }
       }
-      temp_dState[e] = current_temperature[e];
     #else
       pid_output = constrain(target_temperature[e], 0, PID_MAX);
     #endif //PID_OPENLOOP
@@ -918,7 +914,20 @@ void tp_init() {
   #if HAS_FILAMENT_SENSOR
     ANALOG_SELECT(FILWIDTH_PIN);
   #endif
-  
+
+  #if HAS_AUTO_FAN_0
+    pinMode(EXTRUDER_0_AUTO_FAN_PIN, OUTPUT);
+  #endif
+  #if HAS_AUTO_FAN_1 && (EXTRUDER_1_AUTO_FAN_PIN != EXTRUDER_0_AUTO_FAN_PIN)
+    pinMode(EXTRUDER_1_AUTO_FAN_PIN, OUTPUT);
+  #endif
+  #if HAS_AUTO_FAN_2 && (EXTRUDER_2_AUTO_FAN_PIN != EXTRUDER_0_AUTO_FAN_PIN) && (EXTRUDER_2_AUTO_FAN_PIN != EXTRUDER_1_AUTO_FAN_PIN)
+    pinMode(EXTRUDER_2_AUTO_FAN_PIN, OUTPUT);
+  #endif
+  #if HAS_AUTO_FAN_3 && (EXTRUDER_3_AUTO_FAN_PIN != EXTRUDER_0_AUTO_FAN_PIN) && (EXTRUDER_3_AUTO_FAN_PIN != EXTRUDER_1_AUTO_FAN_PIN) && (EXTRUDER_3_AUTO_FAN_PIN != EXTRUDER_2_AUTO_FAN_PIN)
+    pinMode(EXTRUDER_3_AUTO_FAN_PIN, OUTPUT);
+  #endif
+
   // Use timer0 for temperature measurement
   // Interleave temperature interrupt with millies interrupt
   OCR0B = 128;
@@ -1229,7 +1238,7 @@ ISR(TIMER0_COMPB_vect) {
       static unsigned char state_timer_heater_ ## n = 0
   #else
     #define ISR_STATICS(n) static unsigned char soft_pwm_ ## n
-  #endif 
+  #endif
 
   // Statics per heater
   ISR_STATICS(0);
@@ -1541,7 +1550,7 @@ ISR(TIMER0_COMPB_vect) {
       if (minttemp_raw[0] GE0 current_temperature_raw[0]) min_temp_error(0);
     #endif
 
-    #if HAS_TEMP_1
+    #if HAS_TEMP_1 && EXTRUDERS > 1
       #if HEATER_1_RAW_LO_TEMP > HEATER_1_RAW_HI_TEMP
         #define GE1 <=
       #else
@@ -1551,7 +1560,7 @@ ISR(TIMER0_COMPB_vect) {
       if (minttemp_raw[1] GE1 current_temperature_raw[1]) min_temp_error(1);
     #endif // TEMP_SENSOR_1
 
-    #if HAS_TEMP_2
+    #if HAS_TEMP_2 && EXTRUDERS > 2
       #if HEATER_2_RAW_LO_TEMP > HEATER_2_RAW_HI_TEMP
         #define GE2 <=
       #else
@@ -1561,7 +1570,7 @@ ISR(TIMER0_COMPB_vect) {
       if (minttemp_raw[2] GE2 current_temperature_raw[2]) min_temp_error(2);
     #endif // TEMP_SENSOR_2
 
-    #if HAS_TEMP_3
+    #if HAS_TEMP_3 && EXTRUDERS > 3
       #if HEATER_3_RAW_LO_TEMP > HEATER_3_RAW_HI_TEMP
         #define GE3 <=
       #else
