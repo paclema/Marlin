@@ -282,3 +282,27 @@ SAVMkI_HID.build.variant=at90usb
 SAVMkI_HID.build.vid=0x16D0
 SAVMkI_HID.build.pid=0x076B
 SAVMkI_HID.build.extra_flags=-DUSB_VID={build.vid} -DUSB_PID={build.pid}
+
+########################################
+## bqCNC
+########################################
+bqCNC.name=bqCNC
+
+bqCNC.upload.tool=arduino:avrdude
+bqCNC.upload.protocol=wiring
+bqCNC.upload.maximum_size=258048
+bqCNC.upload.speed=115200
+
+bqCNC.bootloader.low_fuses=0xFE
+bqCNC.bootloader.high_fuses=0xD8
+bqCNC.bootloader.extended_fuses=0xFC
+bqCNC.bootloader.path=stk500v2
+bqCNC.bootloader.file=stk500boot_v2_mega2560.hex
+bqCNC.bootloader.unlock_bits=0x3F
+bqCNC.bootloader.lock_bits=0x0F
+
+bqCNC.build.mcu=atmega2560
+bqCNC.build.f_cpu=16000000L
+bqCNC.build.board=AVR_bqCNC
+bqCNC.build.core=arduino:arduino
+bqCNC.build.variant=bqCNC
